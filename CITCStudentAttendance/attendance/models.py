@@ -9,12 +9,17 @@ class User(models.Model):
     def __str__(self):
         return self.firstName + " " + self.lastName
     
-class Record(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-    date = models.DateField(null=True, blank=True)
-    timeIn = models.TimeField(null=True, blank=True)
-    timeOut = models.TimeField(null=True, blank=True)
-    description = models.TextField(max_length=200, null=True, blank=True)
+class Mode(models.Model):
+    mode = models.CharField(max_length=10)
 
     def __str__(self):
-        return self.user.firstName + " " + self.user.lastName + " " + str(self.date)    
+        return self.mode
+    
+class Record(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    mode = models.ForeignKey(Mode, on_delete=models.CASCADE, null=True)
+    dateTime = models.DateTimeField(null=True, blank=True)
+    remarks = models.TextField(max_length=200, null=True, blank=True)
+
+    def __str__(self):
+        return self.user.firstName + " " + self.user.lastName + " " + str(self.dateTime)
