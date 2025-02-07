@@ -6,32 +6,46 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import Button from '@mui/material/Button';
 import { useParams } from 'react-router-dom';
-
-
-function createData(IDNumber, date, timeIn, timeOut, Description) {
-    return { IDNumber, date, timeIn, timeOut, Description };
-}
-
-const rows = [
-    createData('2019-12345', '2021-10-01', '08:00', '12:00', 'Absent'),
-    createData('2019-12345', '2021-10-02', '08:00', '12:00', 'Absent'),
-    createData('2019-12345', '2021-10-03', '08:00', '12:00', 'Absent'),
-    createData('2019-12345', '2021-10-04', '08:00', '12:00', 'Absent'),
-];
+import http from './../axios';
+import { useEffect } from 'react';
 
 export default function Student() {
-    const currentHour = new Date().getHours();
-    const isMorning = currentHour < 12;
-    const isAfternoon = currentHour >= 12;
+    const [rows, setRows] = React.useState([]);
     const { id } = useParams();
+    const [students, setStudents] = React.useState(null);
+
+    useEffect(() => {
+        const fetchStudentRecords = async () => {
+            try {
+                const response = await http.get('records/');
+                const records = response.data;
+                const studentRecords = records.filter(record => String(record.user.id) === String(id));
+                setRows(studentRecords);
+            } catch (error) {
+                console.error('Error fetching student records:', error);
+            }
+        };
+        const fetchStudent = async () => {
+            try {
+                const response = await http.get(`students/${id}`);
+                const student = response.data;
+                setStudents(student);
+            } catch (error) {
+                console.error('Error fetching student records:', error);
+            }
+        };
+
+
+        fetchStudent();
+        fetchStudentRecords();
+    }, [id]);
 
     return (
         <div>
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                    <h1>Student {id}</h1>
+                    <h1>{students?.firstName} {students?.lastName}</h1>
                 </div>
             </div>
             <TableContainer component={Paper}>
@@ -39,25 +53,23 @@ export default function Student() {
                     <TableHead>
                         <TableRow>
                             <TableCell>ID Number</TableCell>
-                            <TableCell align="right">Date</TableCell>
-                            <TableCell align="right">Time In</TableCell>
-                            <TableCell align="right">Time Out</TableCell>
-                            <TableCell align="right">Description</TableCell>
+                            <TableCell align="right">DateTime</TableCell>
+                            <TableCell align="right">Mode</TableCell>
+                            <TableCell align="right">Remarks</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {rows.map((row) => (
                             <TableRow
-                                key={row.name}
+                                key={row.id}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
                                 <TableCell component="th" scope="row">
-                                    {row.IDNumber}
+                                    {row.user.idNumber}
                                 </TableCell>
-                                <TableCell align="right">{row.date}</TableCell>
-                                <TableCell align="right">{row.timeIn}</TableCell>
-                                <TableCell align="right">{row.timeOut}</TableCell>
-                                <TableCell align="right">{row.Description}</TableCell>
+                                <TableCell align="right">{row.dateTime}</TableCell>
+                                <TableCell align="right">{row.mode.mode}</TableCell>
+                                <TableCell align="right">{row.remarks}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>

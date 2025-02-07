@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from .serializers import UserSerializer, RecordSerializer
-from .models import User, Record
+from .serializers import UserSerializer, RecordSerializer, ModeSerializer
+from .models import User, Record, Mode
 
 from rest_framework.generics import ListAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView
 
@@ -26,3 +26,11 @@ class UserRecordsList(ListAPIView):
     def get_queryset(self):
         user_id = self.kwargs['user_id']
         return Record.objects.filter(user_id=user_id)
+    
+class ModeList(ListCreateAPIView):
+    queryset = Mode.objects.all()
+    serializer_class = ModeSerializer
+    
+class ModeDetail(RetrieveUpdateDestroyAPIView):
+    queryset = Mode.objects.all()
+    serializer_class = ModeSerializer
