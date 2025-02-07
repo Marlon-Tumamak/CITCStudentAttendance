@@ -4,10 +4,13 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import SendIcon from '@mui/icons-material/Send';
 import http from './../axios';
+import { useNavigate } from 'react-router-dom';
+
+
 
 export default function Home() {
     const [idNumber, setIdNumber] = useState('');
-    const [studentRecord, setStudentRecord] = useState(null);
+    const navigate = useNavigate();
 
     const handleInputChange = (event) => {
         setIdNumber(event.target.value);
@@ -19,8 +22,7 @@ export default function Home() {
             const response = await http.get('students/');
             const students = response.data;
             const student = students.find(student => student.idNumber === idNumber);
-            setStudentRecord(student);
-            console.log('Student record:', students);
+            navigate(`/student/${student.id}`);
         } catch (error) {
             console.error('Error fetching student records:', error);
         }
@@ -30,7 +32,7 @@ export default function Home() {
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh', flexDirection: 'column' }}>
             <Box
                 component="form"
-                sx={{ '& > :not(style)': { m: 1, width: '25ch' } }}
+                sx={{ '& > :not(style)': { m: 1, width: '25ch', display: 'flex', flexDirection: 'column', alignItems: 'center' } }}
                 noValidate
                 autoComplete="off"
                 onSubmit={handleSubmit}
@@ -42,16 +44,14 @@ export default function Home() {
                     value={idNumber}
                     onChange={handleInputChange}
                 />
-                <Button type="submit" variant="contained" endIcon={<SendIcon />}>
-                    Login
-                </Button>
-            </Box>
-            {studentRecord && (
-                <div>
-                    <h3>Student Record:</h3>
-                    <pre>{JSON.stringify(studentRecord, null, 2)}</pre>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
+                    <Button type="submit" variant="contained" endIcon={<SendIcon />} >
+                        TimeIn/TimeOut
+                    </Button>
                 </div>
-            )}
+
+            </Box>
+
         </div>
     );
 }

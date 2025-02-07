@@ -9,12 +9,6 @@ class User(models.Model):
     def __str__(self):
         return self.firstName + " " + self.lastName
     
-class Date(models.Model):
-    date = models.DateField()
-
-    def __str__(self):
-        return str(self.date)
-    
 class Record(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     date = models.DateField(null=True, blank=True)

@@ -7,8 +7,8 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
-import LoginIcon from '@mui/icons-material/Login';
-import LogoutIcon from '@mui/icons-material/Logout';
+import { useParams } from 'react-router-dom';
+
 
 function createData(IDNumber, date, timeIn, timeOut, Description) {
     return { IDNumber, date, timeIn, timeOut, Description };
@@ -25,22 +25,13 @@ export default function Student() {
     const currentHour = new Date().getHours();
     const isMorning = currentHour < 12;
     const isAfternoon = currentHour >= 12;
+    const { id } = useParams();
 
     return (
         <div>
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                    <h1>Student</h1>
-                </div>
-                <div style={{ marginBottom: '10px' }}>
-                    <Button variant="contained" endIcon={<LoginIcon />} disabled={!isMorning}>
-                        Time In
-                    </Button>
-                </div>
-                <div>
-                    <Button variant="contained" endIcon={<LogoutIcon />} disabled={!isAfternoon}>
-                        Time Out
-                    </Button>
+                    <h1>Student {id}</h1>
                 </div>
             </div>
             <TableContainer component={Paper}>
