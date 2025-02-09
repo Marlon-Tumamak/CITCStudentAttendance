@@ -32,7 +32,7 @@ export default function Home() {
                 const currentHour = currentTime.getHours();
                 const mode = currentHour < 12 ? 1 : 2; // Assuming 1 is 'in' and 2 is 'out'
 
-                await http.post('http://172.20.8.178:8000/api/v1/records/', {
+                await http.post('records/', {
                     user: student.id,
                     dateTime: currentTime.toISOString(),
                     remarks: mode === 2 ? remarks : '',
