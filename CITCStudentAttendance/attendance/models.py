@@ -22,4 +22,4 @@ class Record(models.Model):
     remarks = models.TextField(max_length=200, null=True, blank=True)
 
     def __str__(self):
-        return self.user.firstName + " " + self.user.lastName + " " + str(self.date)
+        return self.user.firstName + " " + self.user.lastName + " " + str(self.dateTime)
