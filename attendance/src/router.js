@@ -3,6 +3,7 @@ import React from "react";
 import Header from "./pages/header";
 import Home from "./pages/home";
 import Student from "./pages/student";
+import EditRecord from "./pages/EditRecord";
 
 const router = createBrowserRouter([
     {
@@ -16,6 +17,10 @@ const router = createBrowserRouter([
             {
                 path: "/student/:id",
                 element: <Student />,
+            },
+            {
+                path: "/edit-record/:id",
+                element: <EditRecord />,
             }
         ]
     }

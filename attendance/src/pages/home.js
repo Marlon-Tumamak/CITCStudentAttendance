@@ -1,16 +1,39 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import SendIcon from '@mui/icons-material/Send';
 import http from './../axios';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import platform from 'platform';
 
 export default function Home() {
     const [idNumber, setIdNumber] = useState('');
     const [remarks, setRemarks] = useState('');
     const [showRemarks, setShowRemarks] = useState(false);
+    const [deviceName, setDeviceName] = useState('');
     const navigate = useNavigate();
+    const [ipAddress, setIpAddress] = useState('');
+
+    useEffect(() => {
+        const currentTime = new Date();
+        const currentHour = currentTime.getHours();
+        setShowRemarks(currentHour >= 12);
+
+        // Get device name using platform.js
+        const deviceInfo = platform.description;
+        setDeviceName(deviceInfo);
+
+        // Fetch IP address
+        axios.get('https://api.ipify.org?format=json')
+            .then(response => {
+                setIpAddress(response.data.ip);
+            })
+            .catch(error => {
+                console.error('Error fetching IP address:', error);
+            });
+    }, []);
 
     const handleInputChange = (event) => {
         setIdNumber(event.target.value);
@@ -36,7 +59,9 @@ export default function Home() {
                     user: student.id,
                     dateTime: currentTime.toISOString(),
                     remarks: mode === 2 ? remarks : '',
-                    mode: mode
+                    mode: mode,
+                    deviceName: deviceName,
+                    ipAddress: ipAddress
                 });
                 alert('Record created successfully');
                 navigate(`/student/${student.id}`);
@@ -47,12 +72,6 @@ export default function Home() {
             console.error('Error creating record:', error);
         }
     };
-
-    React.useEffect(() => {
-        const currentTime = new Date();
-        const currentHour = currentTime.getHours();
-        setShowRemarks(currentHour >= 12);
-    }, []);
 
     return (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh', flexDirection: 'column' }}>

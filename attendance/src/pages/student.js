@@ -6,14 +6,16 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { useParams } from 'react-router-dom';
+import Button from '@mui/material/Button';
+import { useParams, useNavigate } from 'react-router-dom';
 import http from './../axios';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function Student() {
-    const [rows, setRows] = React.useState([]);
+    const [rows, setRows] = useState([]);
     const { id } = useParams();
-    const [students, setStudents] = React.useState(null);
+    const [students, setStudents] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchStudentRecords = async () => {
@@ -26,6 +28,7 @@ export default function Student() {
                 console.error('Error fetching student records:', error);
             }
         };
+
         const fetchStudent = async () => {
             try {
                 const response = await http.get(`students/${id}`);
@@ -36,10 +39,19 @@ export default function Student() {
             }
         };
 
-
         fetchStudent();
         fetchStudentRecords();
     }, [id]);
+
+    const formatDateTime = (dateTime) => {
+        const date = new Date(dateTime);
+        date.setHours(date.getHours() + 8); // Add 8 hours to the time
+        return date.toLocaleString(); // Format the date and time as a string
+    };
+
+    const handleEdit = (row) => {
+        navigate(`/edit-record/${row.id}`);
+    };
 
     return (
         <div>
@@ -56,10 +68,13 @@ export default function Student() {
                             <TableCell align="right">DateTime</TableCell>
                             <TableCell align="right">Mode</TableCell>
                             <TableCell align="right">Remarks</TableCell>
+                            <TableCell align="right">Device Name</TableCell>
+                            <TableCell align="right">IP Address</TableCell>
+                            <TableCell align="right">Actions</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {rows.map((row) => (
+                        {rows.slice().reverse().map((row) => (
                             <TableRow
                                 key={row.id}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -67,9 +82,16 @@ export default function Student() {
                                 <TableCell component="th" scope="row">
                                     {row.user.idNumber}
                                 </TableCell>
-                                <TableCell align="right">{row.dateTime}</TableCell>
+                                <TableCell align="right">{formatDateTime(row.dateTime)}</TableCell>
                                 <TableCell align="right">{row.mode.mode}</TableCell>
                                 <TableCell align="right">{row.remarks}</TableCell>
+                                <TableCell align="right">{row.deviceName}</TableCell>
+                                <TableCell align="right">{row.ipAddress}</TableCell>
+                                <TableCell align="right">
+                                    <Button variant="contained" onClick={() => handleEdit(row)}>
+                                        Edit
+                                    </Button>
+                                </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
